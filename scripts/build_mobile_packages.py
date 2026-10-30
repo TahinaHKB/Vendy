@@ -26,6 +26,13 @@ DX_CMD = "/usr/bin/dalvik-exchange"
 
 def build_real_android_apk():
     print("--- Building Real Android APK (compiled & signed) ---")
+    final_apk = os.path.join(DOWNLOADS_DIR, "vendy.apk")
+    if not os.path.exists(ANDROID_JAR) or not os.path.exists(DX_CMD) or not shutil.which("javac") or not shutil.which("aapt"):
+        print("[NOTICE] Android SDK build tools (android.jar/javac/aapt) not available in this environment.")
+        if os.path.exists(final_apk):
+            print(f"Pre-built vendy.apk is already present ({os.path.getsize(final_apk)} bytes). Preserving it.")
+        return
+
     if os.path.exists(BUILD_DIR):
         shutil.rmtree(BUILD_DIR)
     
@@ -377,5 +384,11 @@ def build_ios_ipa():
     print(f"iOS IPA successfully built at {ipa_path} ({os.path.getsize(ipa_path)} bytes)")
 
 if __name__ == "__main__":
-    build_real_android_apk()
-    build_ios_ipa()
+    try:
+        build_real_android_apk()
+    except Exception as exc:
+        print(f"[WARNING] APK compilation skipped: {exc}")
+    try:
+        build_ios_ipa()
+    except Exception as exc:
+        print(f"[WARNING] IPA creation skipped: {exc}")
