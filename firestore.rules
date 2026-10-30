@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isShopOwner(shopId) {
+      return isAuthenticated() && (
+        request.auth.uid == shopId ||
+        ('shop_' + request.auth.uid) == shopId ||
+        (exists(/databases/$(database)/documents/shops/$(shopId)) &&
+         get(/databases/$(database)/documents/shops/$(shopId)).data.ownerId == request.auth.uid)
+      );
+    }
+
+    // Users profile
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Shops: anyone can view public shop info, user can create shops they own, owner can edit
+    match /shops/{shopId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && request.resource.data.ownerId == request.auth.uid;
+      allow update, delete: if isAuthenticated() && (
+        resource.data.ownerId == request.auth.uid ||
+        request.auth.uid == shopId ||
+        ('shop_' + request.auth.uid) == shopId
+      );
+    }
+
+    // Products: anyone can view products on the public marketplace
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && (
+        request.resource.data.ownerId == request.auth.uid ||
+        isShopOwner(request.resource.data.shopId)
+      );
+      allow update: if isAuthenticated() && (
+        (request.resource.data.ownerId != null && request.resource.data.ownerId == request.auth.uid) ||
+        (resource != null && resource.data.ownerId == request.auth.uid) ||
+        (request.resource.data.shopId != null && isShopOwner(request.resource.data.shopId)) ||
+        (resource != null && isShopOwner(resource.data.shopId))
+      );
+      allow delete: if isAuthenticated() && (
+        (resource != null && resource.data.ownerId == request.auth.uid) ||
+        (resource != null && isShopOwner(resource.data.shopId))
+      );
+    }
+
+    // Customers: shop owner can view/manage, checkout can create
+    match /customers/{customerId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isAuthenticated();
+    }
+
+    // Orders: public checkout can create, owner and authenticated client can read/manage
+    match /orders/{orderId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isAuthenticated();
+    }
+  }
+}

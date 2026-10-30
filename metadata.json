@@ -1,0 +1,6 @@
+{
+  "name": "Vendy - Gestion Vendeurs Sociaux",
+  "description": "Plateforme web mobile-first de gestion commerciale, commandes et réservations pour vendeurs Facebook et WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
