@@ -14,14 +14,21 @@ import android.view.View;
 
 public class MainActivity extends Activity {
     private WebView webView;
+    private LocalServer localServer;
     private ValueCallback<Uri[]> uploadMessage;
     private final static int FILECHOOSER_RESULTCODE = 100;
-    private static final String APP_URL = "https://ais-dev-tiac4ofusmw5thxkc4gfsl-330917390643.europe-west2.run.app";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        try {
+            localServer = new LocalServer(getApplicationContext());
+            localServer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
         webView = new WebView(this);
         setContentView(webView);
@@ -32,6 +39,8 @@ public class MainActivity extends Activity {
         settings.setDatabaseEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
+        settings.setAllowFileAccessFromFileURLs(true);
+        settings.setAllowUniversalAccessFromFileURLs(true);
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
@@ -39,7 +48,7 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.startsWith("tel:") || url.startsWith("whatsapp:") || url.startsWith("mailto:")) {
+                if (url.startsWith("tel:") || url.startsWith("whatsapp:") || url.startsWith("mailto:") || url.startsWith("https://wa.me/")) {
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                         startActivity(intent);
@@ -71,7 +80,11 @@ public class MainActivity extends Activity {
             }
         });
         
-        webView.loadUrl(APP_URL);
+        if (localServer != null && localServer.getPort() > 0) {
+            webView.loadUrl("http://127.0.0.1:" + localServer.getPort() + "/index.html");
+        } else {
+            webView.loadUrl("file:///android_asset/index.html");
+        }
     }
 
     @Override
@@ -92,5 +105,13 @@ public class MainActivity extends Activity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (localServer != null) {
+            localServer.stopServer();
+        }
+        super.onDestroy();
     }
 }
