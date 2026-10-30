@@ -174,16 +174,16 @@ export const MobileAppModal: React.FC<MobileAppModalProps> = ({ isOpen, onClose 
                     </div>
                     <div>
                       <h3 className="font-bold text-zinc-900 text-base">Fichier vendy.apk pour Android</h3>
-                      <p className="text-xs text-zinc-500 font-mono">com.vendy.app • 627 Ko • SDK 24 à 34+</p>
+                      <p className="text-xs text-zinc-500 font-mono">com.vendy.app • 62 Ko • Android 5.0 à 14+ (Signé v1/v2/v3)</p>
                     </div>
                   </div>
                   <span className="text-[10px] font-mono font-bold px-2 py-1 bg-black text-white rounded">
-                    OFFICIEL
+                    CERTIFIÉ
                   </span>
                 </div>
 
                 <p className="text-xs sm:text-sm text-zinc-700 leading-relaxed">
-                  Paquet d'installation Android contenant l'application complète, la configuration Firebase unifiée (<code className="bg-zinc-200 px-1 py-0.5 rounded text-[11px]">vendy-2197a</code>), les fonctionnalités grossistes, vendeurs sociaux et marketplace.
+                  Paquet natif compilé avec Android SDK (<code className="bg-zinc-200 px-1 py-0.5 rounded text-[11px]">aapt</code>, <code className="bg-zinc-200 px-1 py-0.5 rounded text-[11px]">dalvik-exchange</code> & <code className="bg-zinc-200 px-1 py-0.5 rounded text-[11px]">apksigner</code>), avec signature officielle et manifeste binaire garantissant une installation sans erreur d'analyse.
                 </p>
 
                 {/* Direct Download Button */}
@@ -194,7 +194,7 @@ export const MobileAppModal: React.FC<MobileAppModalProps> = ({ isOpen, onClose 
                     className="flex-1 py-3.5 px-5 bg-black hover:bg-zinc-800 text-white rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all shadow-md active:scale-[0.99]"
                   >
                     <Download className="w-4 h-4 text-emerald-400" />
-                    <span>Télécharger vendy.apk (627 Ko)</span>
+                    <span>Télécharger vendy.apk (62 Ko)</span>
                   </a>
                   <button
                     onClick={() => handleCopyLink(`${window.location.origin}${apkDownloadUrl}`, 'du fichier APK')}
@@ -343,7 +343,7 @@ export const MobileAppModal: React.FC<MobileAppModalProps> = ({ isOpen, onClose 
                   <div className="py-2 flex items-center justify-between">
                     <span className="font-medium text-zinc-900">Android APK</span>
                     <a href={apkDownloadUrl} download="vendy.apk" className="font-mono text-zinc-900 underline flex items-center gap-1">
-                      vendy.apk (627 Ko) <Download className="w-3 h-3" />
+                      vendy.apk (62 Ko) <Download className="w-3 h-3" />
                     </a>
                   </div>
                   <div className="py-2 flex items-center justify-between">
